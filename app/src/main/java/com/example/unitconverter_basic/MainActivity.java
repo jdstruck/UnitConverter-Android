@@ -4,13 +4,16 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.Editable;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,8 +28,11 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                TextInputEditText tie = findViewById(R.id.tie);
+                Editable tieval = tie.getText();
+
+                TextView tv = findViewById(R.id.tv);
+                tv.setText(tieval);
             }
         });
     }
