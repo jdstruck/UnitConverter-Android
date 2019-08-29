@@ -3,8 +3,6 @@ package com.example.unitconverter_basic;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +11,7 @@ import android.text.Editable;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,13 +27,17 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextInputEditText tie = findViewById(R.id.tie);
-                Editable tieval = tie.getText();
+                EditText num_in = findViewById(R.id.num_in_input);
+                Editable numval = num_in.getText();
 
-                TextView tv = findViewById(R.id.tv);
-                tv.setText(tieval);
+                EditText num_out = findViewById(R.id.num_out_input);
+                num_out.setText(Double.toString(celciusToFahrenheit(numval)));
             }
         });
+    }
+
+    private double celciusToFahrenheit(Editable c) {
+        return (Double.parseDouble(c.toString()) * (9/5)) + 32;
     }
 
     @Override

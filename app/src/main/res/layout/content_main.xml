@@ -15,23 +15,32 @@
         tools:layout_editor_absoluteX="197dp"
         tools:layout_editor_absoluteY="88dp">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
+            android:id="@+id/num_in_label"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:text="Celsius" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tie"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="hint" />
+        <EditText
+            android:id="@+id/num_in_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberDecimal" />
 
-            <TextView
-                android:id="@+id/tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+        <TextView
+            android:id="@+id/num_out_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fahrenheit" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+        <EditText
+            android:id="@+id/num_out_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
