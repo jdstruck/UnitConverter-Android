@@ -1,4 +1,4 @@
-package com.example.unitconverter;
+package com.example.unitconverter_basic;
 
 import org.junit.Test;
 
