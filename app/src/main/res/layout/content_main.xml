@@ -41,6 +41,12 @@
             android:ems="10"
             android:inputType="numberDecimal" />
 
+        <Button
+            android:id="@+id/convert_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Convert!" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

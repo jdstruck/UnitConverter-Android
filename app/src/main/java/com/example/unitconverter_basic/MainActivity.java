@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        Button fab = findViewById(R.id.convert_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -31,13 +32,17 @@ public class MainActivity extends AppCompatActivity {
                 Editable numval = num_in.getText();
 
                 EditText num_out = findViewById(R.id.num_out_input);
-                num_out.setText(Double.toString(celciusToFahrenheit(numval)));
+                num_out.setText(Double.toString(celsiusToFahrenheit(numval)));
             }
         });
     }
 
-    private double celciusToFahrenheit(Editable c) {
-        return (Double.parseDouble(c.toString()) * (9/5)) + 32;
+    private double celsiusToFahrenheit(Editable c) {
+        return (Double.parseDouble(c.toString()) * (9.0/5.0)) + 32.0;
+    }
+
+    private double fahrenheitToCelsius(Editable c) {
+        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
     }
 
     @Override
