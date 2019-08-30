@@ -17,6 +17,11 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    enum ConvertType {
+        CELSIUS_TO_FAHRENHEIT,
+        FAHRENHEIT_TO_CELSIUS
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +29,23 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button fab = findViewById(R.id.convert_button);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button convert_button = findViewById(R.id.convert_button);
+        convert_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                EditText num_in = findViewById(R.id.num_in_input);
+                Editable numval = num_in.getText();
+
+                EditText num_out = findViewById(R.id.num_out_input);
+                num_out.setText(Double.toString(celsiusToFahrenheit(numval)));
+            }
+        });
+
+        FloatingActionButton swap_button = findViewById(R.id.swap_button);
+        swap_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
                 EditText num_in = findViewById(R.id.num_in_input);
                 Editable numval = num_in.getText();
 
