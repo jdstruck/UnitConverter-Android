@@ -15,12 +15,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+enum Unit {
+    Celsius,
+    Fahrenheit;
+
+    static String celsiusToFahrenheit(Editable c) {
+        return Double.toString(Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0);
+    }
+
+    static String fahrenheitToCelsius(Editable c) {
+        return Double.toString((Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0));
+    }
+};
+
 public class MainActivity extends AppCompatActivity {
 
-    enum ConvertType {
-        CELSIUS_TO_FAHRENHEIT,
-        FAHRENHEIT_TO_CELSIUS
-    };
+    Unit fromType = Unit.Celsius;
+    Unit toType = Unit.Fahrenheit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 Editable numval = num_in.getText();
 
                 EditText num_out = findViewById(R.id.num_out_input);
-                num_out.setText(Double.toString(celsiusToFahrenheit(numval)));
+                num_out.setText(Unit.celsiusToFahrenheit(numval));
             }
         });
 
@@ -45,22 +56,22 @@ public class MainActivity extends AppCompatActivity {
         swap_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                swapUnits();
 
-                EditText num_in = findViewById(R.id.num_in_input);
-                Editable numval = num_in.getText();
-
-                EditText num_out = findViewById(R.id.num_out_input);
-                num_out.setText(Double.toString(celsiusToFahrenheit(numval)));
             }
         });
     }
 
-    private double celsiusToFahrenheit(Editable c) {
-        return (Double.parseDouble(c.toString()) * (9.0/5.0)) + 32.0;
-    }
+    private void swapUnits() {
+        Unit tmp = this.fromType;
+        this.fromType = this.toType;
+        this.toType = tmp;
 
-    private double fahrenheitToCelsius(Editable c) {
-        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
+        TextView num_in_label = findViewById(R.id.num_in_label);
+        num_in_label.setText(this.fromType.name());
+
+        TextView num_out_label = findViewById(R.id.num_out_label);
+        num_out_label.setText(this.toType.name());
     }
 
     @Override
