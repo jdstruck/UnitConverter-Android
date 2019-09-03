@@ -18,26 +18,20 @@ import android.widget.TextView;
 enum Unit {
     Celsius,
     Fahrenheit;
+
+    static Double celsiusToFahrenheit(Editable c) {
+        return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
+    }
+
+    static Double fahrenheitToCelsius(Editable c) {
+        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
+    }
 };
-
-enum ConvertFromTo {
-    CELSIUSTOFAHRENHEIT,
-    FAHRENHEITTOCELSIUS;
-
-    static String celsiusToFahrenheit(Editable c) {
-        return Double.toString(Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0);
-    }
-
-    static String fahrenheitToCelsius(Editable c) {
-        return Double.toString((Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0));
-    }
-}
 
 public class MainActivity extends AppCompatActivity {
 
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
-    ConvertFromTo fromTo = ConvertFromTo.CELSIUSTOFAHRENHEIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,21 +58,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void convert() {
-        String num_out_text = "";
+        Double num_out_dbl = 0.0;
         EditText num_in = findViewById(R.id.num_in_input);
         Editable numval = num_in.getText();
         EditText num_out = findViewById(R.id.num_out_input);
 
-        switch(this.fromTo) {
-            case CELSIUSTOFAHRENHEIT:
-                num_out_text = ConvertFromTo.celsiusToFahrenheit(numval);
-                break;
-            case FAHRENHEITTOCELSIUS:
-                num_out_text = ConvertFromTo.fahrenheitToCelsius(numval);
-                break;
+        if(this.fromType == Unit.Celsius) {
+            switch(this.toType) {
+                case Celsius:
+                    num_out_dbl = Double.parseDouble(numval.toString());
+                    break;
+                case Fahrenheit:
+                    num_out_dbl = Unit.celsiusToFahrenheit(numval);
+                    break;
+            }
         }
-
-        num_out.setText(num_out_text);
+        if(this.fromType == Unit.Fahrenheit) {
+            switch(this.toType) {
+                case Celsius:
+                    num_out_dbl = Unit.fahrenheitToCelsius(numval);
+                    break;
+                case Fahrenheit:
+                    num_out_dbl = Double.parseDouble(numval.toString());
+                    break;
+            }
+        }
+        num_out.setText(num_out_dbl.toString());
     }
 
     private void swapUnits() {
