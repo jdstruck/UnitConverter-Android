@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-        num_out.setText(num_out_dbl.toString());
+        num_out.setText(String.format("%.2f", num_out_dbl));
     }
 
     private void swapUnits() {
