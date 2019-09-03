@@ -32,6 +32,8 @@
             android:id="@+id/num_out_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scrollHorizontally="true"
+            android:gravity="center"
             android:text="Fahrenheit" />
 
         <EditText
@@ -39,7 +41,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="numberDecimal" />
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:inputType="none"
+            android:scrollHorizontally="true"
+            />
 
         <Button
             android:id="@+id/convert_button"
