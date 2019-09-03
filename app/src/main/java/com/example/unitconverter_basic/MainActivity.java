@@ -18,6 +18,11 @@ import android.widget.TextView;
 enum Unit {
     Celsius,
     Fahrenheit;
+};
+
+enum ConvertFromTo {
+    CELSIUSTOFAHRENHEIT,
+    FAHRENHEITTOCELSIUS;
 
     static String celsiusToFahrenheit(Editable c) {
         return Double.toString(Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0);
@@ -26,12 +31,13 @@ enum Unit {
     static String fahrenheitToCelsius(Editable c) {
         return Double.toString((Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0));
     }
-};
+}
 
 public class MainActivity extends AppCompatActivity {
 
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
+    ConvertFromTo fromTo = ConvertFromTo.CELSIUSTOFAHRENHEIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +50,7 @@ public class MainActivity extends AppCompatActivity {
         convert_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText num_in = findViewById(R.id.num_in_input);
-                Editable numval = num_in.getText();
-
-                EditText num_out = findViewById(R.id.num_out_input);
-                num_out.setText(Unit.celsiusToFahrenheit(numval));
+                convert();
             }
         });
 
@@ -57,9 +59,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 swapUnits();
-
             }
         });
+    }
+
+    private void convert() {
+        String num_out_text = "";
+        EditText num_in = findViewById(R.id.num_in_input);
+        Editable numval = num_in.getText();
+        EditText num_out = findViewById(R.id.num_out_input);
+
+        switch(this.fromTo) {
+            case CELSIUSTOFAHRENHEIT:
+                num_out_text = ConvertFromTo.celsiusToFahrenheit(numval);
+                break;
+            case FAHRENHEITTOCELSIUS:
+                num_out_text = ConvertFromTo.fahrenheitToCelsius(numval);
+                break;
+        }
+
+        num_out.setText(num_out_text);
     }
 
     private void swapUnits() {
