@@ -33,6 +33,14 @@ enum Unit {
 };
 
 public class MainActivity extends AppCompatActivity {
+    /*
+    TODO: try catch for empty EditText num_in field
+    TODO: remove Convert button
+    TODO: remove Swap button
+    TODO: dropdown for unit on right of input
+    TODO: buttons/radio on top to select other unit categories
+    TODO: programmatically add conversion output for each type
+    */
 
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
