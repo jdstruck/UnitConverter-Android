@@ -33,89 +33,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/parent_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="150dp"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/toLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/num_out0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:inputType="none|numberSigned|numberDecimal"
-                android:scrollHorizontally="true" />
 
-            <TextView
-                android:id="@+id/num_out_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Celsius" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/toLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/num_out1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:inputType="none|numberSigned|numberDecimal"
-                android:scrollHorizontally="true" />
-
-            <TextView
-                android:id="@+id/num_out_label3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Fahrenheit" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/toLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/num_out2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:inputType="none|numberSigned|numberDecimal"
-                android:scrollHorizontally="true" />
-
-            <TextView
-                android:id="@+id/num_out_label2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kelvin" />
-
-        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

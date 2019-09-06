@@ -1,5 +1,6 @@
 package com.example.unitconverter_basic;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -12,47 +13,19 @@ import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-enum Unit {
-    Celsius,
-    Fahrenheit,
-    Kelvin;
-
-    static Double celsiusToFahrenheit(Editable c) {
-        return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
-    }
-
-    static Double celsiusToKelvin(Editable c) {
-        return Double.parseDouble(c.toString()) + 273.15;
-    }
-
-    static Double fahrenheitToCelsius(Editable c) {
-        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
-    }
-
-    static Double fahrenheitToKelvin(Editable c) {
-        return (Double.parseDouble(c.toString()) - 32.0) / 1.8 + 273.15;
-    }
-
-    static Double kelvinToCelsius(Editable c) {
-        return Double.parseDouble(c.toString()) - 273.15;
-    }
-
-    static Double kelvinToFahrenheit(Editable c) {
-        return Double.parseDouble(c.toString()) * 1.8 - 459.67;
-    }
-};
 
 public class MainActivity extends AppCompatActivity {
     /*
@@ -68,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
 
+    private LinearLayout parentLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +50,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
+
         EditText num_in = findViewById(R.id.num_in_input);
         num_in.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {
-                //convert();
-            }
+            public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -98,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> spinnerArray =  new ArrayList<String>();
         for (Unit unit: Unit.values()) {
             spinnerArray.add(unit.name());
+            onAddField(parentLinearLayout, unit.name());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -122,34 +96,25 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-
-//        Button convert_button = findViewById(R.id.convert_button);
-//        convert_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                convert();
-//            }
-//        });
-//
-//        FloatingActionButton swap_button = findViewById(R.id.swap_button);
-//        swap_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                swapUnits();
-//            }
-//        });
+    }
+    public void onAddField(View v, String s) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View rowView = inflater.inflate(R.layout.field, null);
+        TextView text = (TextView)rowView.findViewById(R.id.num_out_label_template);
+        text.setText(s);
+        // Add the new row before the add field button.
+        parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
     }
 
     private void convert() {
         Double num_out_dbl = 0.0;
         EditText num_in = findViewById(R.id.num_in_input);
         Editable numval = num_in.getText();
-        EditText num_out0 = findViewById(R.id.num_out0);
-        EditText num_out1 = findViewById(R.id.num_out1);
-        EditText num_out2 = findViewById(R.id.num_out2);
+        //EditText num_out0 = findViewById(R.id.num_out0);
+//        EditText num_out1 = findViewById(R.id.num_out1);
+//        EditText num_out2 = findViewById(R.id.num_out2);
 
         if(num_in.length() == 0) {
-            num_in.setText("0");
             return;
         }
         if(this.fromType == Unit.Celsius) {
@@ -172,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-        num_out0.setText(String.format("%.4f", num_out_dbl));
+        //num_out0.setText(String.format("%.4f", num_out_dbl));
     }
 
 //    private void swapUnits() {
@@ -233,3 +198,32 @@ public class MainActivity extends AppCompatActivity {
         alert11.show();
     }
 }
+enum Unit {
+    Celsius,
+    Fahrenheit,
+    Kelvin;
+
+    static Double celsiusToFahrenheit(Editable c) {
+        return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
+    }
+
+    static Double celsiusToKelvin(Editable c) {
+        return Double.parseDouble(c.toString()) + 273.15;
+    }
+
+    static Double fahrenheitToCelsius(Editable c) {
+        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
+    }
+
+    static Double fahrenheitToKelvin(Editable c) {
+        return (Double.parseDouble(c.toString()) - 32.0) / 1.8 + 273.15;
+    }
+
+    static Double kelvinToCelsius(Editable c) {
+        return Double.parseDouble(c.toString()) - 273.15;
+    }
+
+    static Double kelvinToFahrenheit(Editable c) {
+        return Double.parseDouble(c.toString()) * 1.8 - 459.67;
+    }
+};
