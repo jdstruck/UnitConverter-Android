@@ -117,6 +117,14 @@ public class MainActivity extends AppCompatActivity {
         if(num_in.length() == 0) {
             return;
         }
+
+        for (int i = 0; i < parentLinearLayout.getChildCount(); i++) {
+            View childLayout = parentLinearLayout.getChildAt(i);
+            ArrayList<View> arrayList;
+            //childLayout.findViewsWithText(arrayList, "Fahrenheit", );
+            System.out.println(childLayout);
+        }
+
         if(this.fromType == Unit.Celsius) {
             switch(this.toType) {
                 case Celsius:
