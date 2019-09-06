@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> spinnerArray =  new ArrayList<String>();
         for (Unit unit: Unit.values()) {
             spinnerArray.add(unit.name());
-            onAddField(parentLinearLayout, unit.name());
+            addField(parentLinearLayout, unit.name());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -81,8 +82,38 @@ public class MainActivity extends AppCompatActivity {
         Spinner sItems = (Spinner) findViewById(R.id.spinner);
         sItems.setAdapter(adapter);
 
-        String selected = sItems.getSelectedItem().toString();
-        switch(selected) {
+        sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                TextView spinnerTextView = (TextView) selectedItemView;
+                String selectedText = spinnerTextView.getText().toString();
+                onSpinnerChange(selectedText);
+                return;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+    }
+    public void addField(View v, String s) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View rowView = inflater.inflate(R.layout.field, null);
+        EditText editText = (EditText)rowView.findViewById(R.id.num_out_template);
+        TextView textView = (TextView)rowView.findViewById(R.id.num_out_label_template);
+        editText.setTag(s);
+        textView.setText(s);
+        // Add the new row before the add field button.
+        parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
+    }
+
+    private void onSpinnerChange(String selectedText) {
+
+        switch(selectedText) {
             case "Celsius": {
                 this.fromType = Unit.Celsius;
                 break;
@@ -97,55 +128,72 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void onAddField(View v, String s) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View rowView = inflater.inflate(R.layout.field, null);
-        TextView text = (TextView)rowView.findViewById(R.id.num_out_label_template);
-        text.setText(s);
-        // Add the new row before the add field button.
-        parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
-    }
-
     private void convert() {
         Double num_out_dbl = 0.0;
         EditText num_in = findViewById(R.id.num_in_input);
         Editable numval = num_in.getText();
-        //EditText num_out0 = findViewById(R.id.num_out0);
-//        EditText num_out1 = findViewById(R.id.num_out1);
-//        EditText num_out2 = findViewById(R.id.num_out2);
 
-        if(num_in.length() == 0) {
-            return;
-        }
+
 
         for (int i = 0; i < parentLinearLayout.getChildCount(); i++) {
-            View childLayout = parentLinearLayout.getChildAt(i);
-            ArrayList<View> arrayList;
-            //childLayout.findViewsWithText(arrayList, "Fahrenheit", );
-            System.out.println(childLayout);
-        }
+            LinearLayout childLinearLayout = (LinearLayout) parentLinearLayout.getChildAt(i);
+            TextView childElemTextView;
+            EditText childElemEditText;
+            for (int j = 0; j < childLinearLayout.getChildCount(); j++) {
+                View childElem = childLinearLayout.getChildAt(j);
+                if (childElem instanceof EditText) {
+                    childElemEditText = (EditText) childElem;
+                    String tag = (String) childElem.getTag();
+                    System.out.println(tag);
+                    if(num_in.length() == 0) {
+                        childElemEditText.setText("");
+                        break;
+                    }
+                    if(this.fromType == Unit.Celsius) {
+                        switch(tag) {
+                            case "Celsius":
+                                num_out_dbl = Double.parseDouble(numval.toString());
+                                break;
+                            case "Fahrenheit":
+                                num_out_dbl = Unit.celsiusToFahrenheit(numval);
+                                break;
+                            case "Kelvin":
+                                num_out_dbl = Unit.celsiusToKelvin(numval);
+                                break;
+                        }
+                    }
+                    if(this.fromType == Unit.Fahrenheit) {
+                        switch(tag) {
+                            case "Fahrenheit":
+                                num_out_dbl = Double.parseDouble(numval.toString());
+                                break;
+                            case "Celsius":
+                                num_out_dbl = Unit.fahrenheitToCelsius(numval);
+                                break;
+                            case "Kelvin":
+                                num_out_dbl = Unit.fahrenheitToKelvin(numval);
+                                break;
 
-        if(this.fromType == Unit.Celsius) {
-            switch(this.toType) {
-                case Celsius:
-                    num_out_dbl = Double.parseDouble(numval.toString());
-                    break;
-                case Fahrenheit:
-                    num_out_dbl = Unit.celsiusToFahrenheit(numval);
-                    break;
+                        }
+                    }
+                    if(this.fromType == Unit.Kelvin) {
+                        switch(tag) {
+                            case "Kelvin":
+                                num_out_dbl = Double.parseDouble(numval.toString());
+                                break;
+                            case "Celsius":
+                                num_out_dbl = Unit.kelvinToCelsius(numval);
+                                break;
+                            case "Fahrenheit":
+                                num_out_dbl = Unit.kelvinToFahrenheit(numval);
+                                break;
+
+                        }
+                    }
+                    childElemEditText.setText(Double.toString(num_out_dbl)); //String.format("%.4f", num_out_dbl));
+                }
             }
         }
-        if(this.fromType == Unit.Fahrenheit) {
-            switch(this.toType) {
-                case Celsius:
-                    num_out_dbl = Unit.fahrenheitToCelsius(numval);
-                    break;
-                case Fahrenheit:
-                    num_out_dbl = Double.parseDouble(numval.toString());
-                    break;
-            }
-        }
-        //num_out0.setText(String.format("%.4f", num_out_dbl));
     }
 
 //    private void swapUnits() {
