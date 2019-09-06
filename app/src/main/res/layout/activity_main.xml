@@ -29,6 +29,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="right"
         android:clickable="true"
+        app:backgroundTint="#6734BD"
         app:srcCompat="@android:drawable/stat_notify_sync_noanim" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

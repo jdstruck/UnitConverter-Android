@@ -1,13 +1,16 @@
 package com.example.unitconverter_basic;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
@@ -34,27 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-
-            case KeyEvent.KEYCODE_0:
-            case KeyEvent.KEYCODE_1:
-            case KeyEvent.KEYCODE_2:
-            case KeyEvent.KEYCODE_3:
-            case KeyEvent.KEYCODE_4:
-            case KeyEvent.KEYCODE_5:
-            case KeyEvent.KEYCODE_6:
-            case KeyEvent.KEYCODE_7:
-            case KeyEvent.KEYCODE_8:
-            case KeyEvent.KEYCODE_9:
-                convert();
-                break;
-            default:
-                return super.onKeyUp(keyCode, event);
-        }
-        return super.onKeyUp(keyCode, event);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +44,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        EditText num_in = findViewById(R.id.num_in_input);
+        num_in.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //convert();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                System.out.println(count);
+                convert();
+            }
+        });
 
         Button convert_button = findViewById(R.id.convert_button);
         convert_button.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-        num_out.setText(String.format("%.2f", num_out_dbl));
+        num_out.setText(String.format("%.4f", num_out_dbl));
     }
 
     private void swapUnits() {
@@ -141,5 +142,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void alert(String s) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(s);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

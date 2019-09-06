@@ -31,7 +31,8 @@
             android:ems="10"
             android:gravity="center"
             android:inputType="numberDecimal"
-            android:scrollHorizontally="true" />
+            android:scrollHorizontally="true"
+            android:textColorLink="#D900FF" />
 
         <TextView
             android:id="@+id/num_in_label"
