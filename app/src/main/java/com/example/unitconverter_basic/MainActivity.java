@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
+        convert();
     }
     private void convert() {
         Double num_out_dbl = 0.0;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     childElemEditText = (EditText) childElem;
                     String tag = (String) childElem.getTag();
                     System.out.println(tag);
-                    if(num_in.length() == 0) {
+                    if(num_in.length() == 0 || numval.toString().equals("-")) {
                         childElemEditText.setText("");
                         break;
                     }
