@@ -15,31 +15,54 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 enum Unit {
     Celsius,
-    Fahrenheit;
+    Fahrenheit,
+    Kelvin;
 
     static Double celsiusToFahrenheit(Editable c) {
         return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
     }
 
+    static Double celsiusToKelvin(Editable c) {
+        return Double.parseDouble(c.toString()) + 273.15;
+    }
+
     static Double fahrenheitToCelsius(Editable c) {
         return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
+    }
+
+    static Double fahrenheitToKelvin(Editable c) {
+        return (Double.parseDouble(c.toString()) - 32.0) / 1.8 + 273.15;
+    }
+
+    static Double kelvinToCelsius(Editable c) {
+        return Double.parseDouble(c.toString()) - 273.15;
+    }
+
+    static Double kelvinToFahrenheit(Editable c) {
+        return Double.parseDouble(c.toString()) * 1.8 - 459.67;
     }
 };
 
 public class MainActivity extends AppCompatActivity {
     /*
     TODO: try catch for empty EditText num_in field
-    TODO: remove Convert button
-    TODO: remove Swap button
-    TODO: dropdown for unit on right of input
+    /: remove Convert button
+    /: remove Swap button
+    TODO: IN PROGRESS dropdown for unit on right of input
     TODO: buttons/radio on top to select other unit categories
     TODO: programmatically add conversion output for each type
+    TODO: handle minus sign when no numbers are present
     */
 
     Unit fromType = Unit.Celsius;
@@ -67,34 +90,68 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println(count);
+                System.out.println(s);
                 convert();
             }
         });
 
-        Button convert_button = findViewById(R.id.convert_button);
-        convert_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                convert();
-            }
-        });
+        List<String> spinnerArray =  new ArrayList<String>();
+        for (Unit unit: Unit.values()) {
+            spinnerArray.add(unit.name());
+        }
 
-        FloatingActionButton swap_button = findViewById(R.id.swap_button);
-        swap_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                swapUnits();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, spinnerArray);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner sItems = (Spinner) findViewById(R.id.spinner);
+        sItems.setAdapter(adapter);
+
+        String selected = sItems.getSelectedItem().toString();
+        switch(selected) {
+            case "Celsius": {
+                this.fromType = Unit.Celsius;
+                break;
             }
-        });
+            case "Fahrenheit": {
+                this.fromType = Unit.Fahrenheit;
+                break;
+            }
+            case "Kelvin": {
+                this.fromType = Unit.Kelvin;
+                break;
+            }
+        }
+
+//        Button convert_button = findViewById(R.id.convert_button);
+//        convert_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                convert();
+//            }
+//        });
+//
+//        FloatingActionButton swap_button = findViewById(R.id.swap_button);
+//        swap_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                swapUnits();
+//            }
+//        });
     }
 
     private void convert() {
         Double num_out_dbl = 0.0;
         EditText num_in = findViewById(R.id.num_in_input);
         Editable numval = num_in.getText();
-        EditText num_out = findViewById(R.id.num_out_input);
+        EditText num_out0 = findViewById(R.id.num_out0);
+        EditText num_out1 = findViewById(R.id.num_out1);
+        EditText num_out2 = findViewById(R.id.num_out2);
 
+        if(num_in.length() == 0) {
+            num_in.setText("0");
+            return;
+        }
         if(this.fromType == Unit.Celsius) {
             switch(this.toType) {
                 case Celsius:
@@ -115,20 +172,20 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-        num_out.setText(String.format("%.4f", num_out_dbl));
+        num_out0.setText(String.format("%.4f", num_out_dbl));
     }
 
-    private void swapUnits() {
-        Unit tmp = this.fromType;
-        this.fromType = this.toType;
-        this.toType = tmp;
-
-        TextView num_in_label = findViewById(R.id.num_in_label);
-        num_in_label.setText(this.fromType.name());
-
-        TextView num_out_label = findViewById(R.id.num_out_label);
-        num_out_label.setText(this.toType.name());
-    }
+//    private void swapUnits() {
+//        Unit tmp = this.fromType;
+//        this.fromType = this.toType;
+//        this.toType = tmp;
+//
+//        TextView num_in_label = findViewById(R.id.num_in_label);
+//        num_in_label.setText(this.fromType.name());
+//
+//        TextView num_out_label = findViewById(R.id.num_out_label);
+//        num_out_label.setText(this.toType.name());
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
