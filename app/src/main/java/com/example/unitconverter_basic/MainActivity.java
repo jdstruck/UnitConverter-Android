@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     Unit fromType = Unit.Celsius;
     Unit toType = Unit.Fahrenheit;
 
+    String[] tempUnits = {"Celsius", "Fahrenheit", "Kelvin"};
+    String[] lengthUnits = {"Centimeters", "Inches", "Feet", "Yards", "Meters", "Kilometers", "Miles", "Lightyears"};
+
     private LinearLayout parentLinearLayout;
 
     @Override
@@ -70,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         List<String> spinnerArray =  new ArrayList<String>();
-        for (Unit unit: Unit.values()) {
-            spinnerArray.add(unit.name());
-            addField(parentLinearLayout, unit.name());
+        for (String s: lengthUnits) {
+            spinnerArray.add(s);
+            addField(parentLinearLayout, s);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -255,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         alert11.show();
     }
 }
-enum Unit {
+enum Unit{
     Celsius,
     Fahrenheit,
     Kelvin;
