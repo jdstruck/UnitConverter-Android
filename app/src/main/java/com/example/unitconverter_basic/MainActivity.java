@@ -30,13 +30,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     /*
-    TODO: try catch for empty EditText num_in field
-    /: remove Convert button
-    /: remove Swap button
-    TODO: IN PROGRESS dropdown for unit on right of input
+    : try catch for empty EditText num_in field
+    : remove Convert button
+    : remove Swap button
+    : IN PROGRESS dropdown for unit on right of input
     TODO: buttons/radio on top to select other unit categories
-    TODO: programmatically add conversion output for each type
-    TODO: handle minus sign when no numbers are present
+    : programmatically add conversion output for each type
+    : handle minus sign when no numbers are present
     */
 
     Unit fromType = Unit.Celsius;
