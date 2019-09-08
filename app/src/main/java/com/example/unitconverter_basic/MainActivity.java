@@ -4,144 +4,185 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    /*
-    : try catch for empty EditText num_in field
-    : remove Convert button
-    : remove Swap button
-    : IN PROGRESS dropdown for unit on right of input
-    TODO: buttons/radio on top to select other unit categories
-    : programmatically add conversion output for each type
-    : handle minus sign when no numbers are present
-    */
 
-    Unit fromType = Unit.Celsius;
-    Unit toType = Unit.Fahrenheit;
+    //TODO: fix initial 0 bug
 
-    String[] tempUnits = {"Celsius", "Fahrenheit", "Kelvin"};
-    String[] lengthUnits = {"Centimeters", "Inches", "Feet", "Yards", "Meters", "Kilometers", "Miles", "Lightyears"};
+    private String inputUnit;
+    private double inputValue;
 
+    private EditText inputField;
     private LinearLayout parentLinearLayout;
+    private List<String> inputUnitSpinnerList = new ArrayList<>();
+    private List<String> unitCategorySpinnerList = new ArrayList<>();
+    private Spinner unitCategorySpinner;
+    private Spinner inputUnitSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.inputField = findViewById(R.id.input_field);
+        this.parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
+        this.unitCategorySpinner = (Spinner) findViewById(R.id.unit_category_spinner);
+        this.inputUnitSpinner = (Spinner) findViewById(R.id.input_unit_spinner);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
+        initializeApp();
+    }
 
-        EditText num_in = findViewById(R.id.num_in_input);
-        num_in.addTextChangedListener(new TextWatcher() {
+    public void initializeApp() {
+
+        populateUnitCategorySpinner();
+        configureUnitCategorySpinnerListener();
+        populateInputUnitsSpinner(Unit.temperatureUnits);
+        configureInputUnitSpinnerListener();
+        configureInputFieldTextListener();
+
+    }
+
+    private void populateUnitCategorySpinner() {
+        populateSpinner(this.unitCategorySpinner, this.unitCategorySpinnerList, Unit.unitCategories);
+    }
+
+    private void configureUnitCategorySpinnerListener() {
+        unitCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                TextView spinnerTextView = (TextView) selectedItemView;
+                String selectedText = spinnerTextView.getText().toString();
+
+                inputField.setText("");
+
+                if (selectedText.equals("Temperature")) {
+                    inflateOutputUnitFields(Unit.temperatureUnits);
+                    //populateInputUnitsSpinner(Unit.temperatureUnits);
+                } else if (selectedText.equals("Length")) {
+                    inflateOutputUnitFields(Unit.lengthUnits);
+                    //populateInputUnitsSpinner(Unit.lengthUnits);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
+        });
+    }
+
+    private void populateInputUnitsSpinner(String[] unitsArray) {
+        populateSpinner(this.inputUnitSpinner, this.inputUnitSpinnerList, unitsArray);
+    }
+
+    private void populateSpinner(Spinner spinner, List<String> spinnerList, String[] unitsArray) {
+        spinnerList.addAll(Arrays.asList(unitsArray));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, spinnerList);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    private void inflateOutputUnitFields(String[] unitsArray) {
+        // clear output fields from parentLinearLayout
+        this.parentLinearLayout.removeAllViews();
+        for (String unit: unitsArray) {
+            addField(this.parentLinearLayout, unit);
+        }
+    }
+
+    private void configureInputUnitSpinnerListener() {
+
+        inputUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                TextView spinnerTextView = (TextView) selectedItemView;
+                String selectedText = spinnerTextView.getText().toString();
+                onInputSpinnerChange(selectedText);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
+
+        });
+    }
+
+    private void onInputSpinnerChange(String selectedText) {
+
+        this.inputUnit = selectedText;
+        convertUnits();
+    }
+
+    private void configureInputFieldTextListener() {
+        // Enable TextWatcher on input unit field
+        this.inputField.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                System.out.println("beforeTextChanged:\n\tCharSequence s: " + s +
+                        "\n\tint start: " + start +
+                        "\n\tint count: " + count +
+                        "\n\tint after: " + after);
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println(s);
-                convert();
+                System.out.println("onTextChanged:\n\tCharSequence s: " + s +
+                        "\n\tint start: " + start +
+                        "\n\tint before: " + before +
+                        "\n\tint count: " + count);
+                convertUnits();
             }
         });
-
-        List<String> spinnerArray =  new ArrayList<String>();
-        for (String s: lengthUnits) {
-            spinnerArray.add(s);
-            addField(parentLinearLayout, s);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_item, spinnerArray);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner sItems = (Spinner) findViewById(R.id.spinner);
-        sItems.setAdapter(adapter);
-
-        sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
-                TextView spinnerTextView = (TextView) selectedItemView;
-                String selectedText = spinnerTextView.getText().toString();
-                onSpinnerChange(selectedText);
-                return;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                return;
-            }
-
-        });
-
     }
-    public void addField(View v, String s) {
+
+    private void addField(View v, String unitTypeString) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
         final View rowView = inflater.inflate(R.layout.field, null);
         EditText editText = (EditText)rowView.findViewById(R.id.num_out_template);
         TextView textView = (TextView)rowView.findViewById(R.id.num_out_label_template);
-        editText.setTag(s);
-        textView.setText(s);
+        editText.setTag(unitTypeString);
+        textView.setText(unitTypeString);
         // Add the new row before the add field button.
         parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
     }
 
-    private void onSpinnerChange(String selectedText) {
+    private void convertUnits() {
+        Editable input_field_value = this.inputField.getText();
 
-        switch(selectedText) {
-            case "Celsius": {
-                this.fromType = Unit.Celsius;
-                break;
-            }
-            case "Fahrenheit": {
-                this.fromType = Unit.Fahrenheit;
-                break;
-            }
-            case "Kelvin": {
-                this.fromType = Unit.Kelvin;
-                break;
-            }
-        }
-        convert();
-    }
-    private void convert() {
+        String sInput_field_value = input_field_value.toString();
+
         Double num_out_dbl = 0.0;
-        EditText num_in = findViewById(R.id.num_in_input);
-        Editable numval = num_in.getText();
-
-
 
         for (int i = 0; i < parentLinearLayout.getChildCount(); i++) {
             LinearLayout childLinearLayout = (LinearLayout) parentLinearLayout.getChildAt(i);
-            TextView childElemTextView;
             EditText childElemEditText;
             for (int j = 0; j < childLinearLayout.getChildCount(); j++) {
                 View childElem = childLinearLayout.getChildAt(j);
@@ -149,47 +190,50 @@ public class MainActivity extends AppCompatActivity {
                     childElemEditText = (EditText) childElem;
                     String tag = (String) childElem.getTag();
                     System.out.println(tag);
-                    if(num_in.length() == 0 || numval.toString().equals("-")) {
+
+                    // Clear fields and break if nothing in input or only minus symbol
+                    if(inputField.length() == 0 || input_field_value.toString().equals("-")) {
                         childElemEditText.setText("");
                         break;
                     }
-                    if(this.fromType == Unit.Celsius) {
+
+                    if(this.inputUnit.equals("Celsius")) {
                         switch(tag) {
                             case "Celsius":
-                                num_out_dbl = Double.parseDouble(numval.toString());
+                                num_out_dbl = Double.parseDouble(input_field_value.toString());
                                 break;
                             case "Fahrenheit":
-                                num_out_dbl = Unit.celsiusToFahrenheit(numval);
+                                num_out_dbl = Unit.celsiusToFahrenheit(input_field_value);
                                 break;
                             case "Kelvin":
-                                num_out_dbl = Unit.celsiusToKelvin(numval);
+                                num_out_dbl = Unit.celsiusToKelvin(input_field_value);
                                 break;
                         }
                     }
-                    if(this.fromType == Unit.Fahrenheit) {
+                    if(this.inputUnit.equals("Fahrenheit")) {
                         switch(tag) {
                             case "Fahrenheit":
-                                num_out_dbl = Double.parseDouble(numval.toString());
+                                num_out_dbl = Double.parseDouble(input_field_value.toString());
                                 break;
                             case "Celsius":
-                                num_out_dbl = Unit.fahrenheitToCelsius(numval);
+                                num_out_dbl = Unit.fahrenheitToCelsius(input_field_value);
                                 break;
                             case "Kelvin":
-                                num_out_dbl = Unit.fahrenheitToKelvin(numval);
+                                num_out_dbl = Unit.fahrenheitToKelvin(input_field_value);
                                 break;
 
                         }
                     }
-                    if(this.fromType == Unit.Kelvin) {
+                    if(this.inputUnit.equals("Kelvin")) {
                         switch(tag) {
                             case "Kelvin":
-                                num_out_dbl = Double.parseDouble(numval.toString());
+                                num_out_dbl = Double.parseDouble(input_field_value.toString());
                                 break;
                             case "Celsius":
-                                num_out_dbl = Unit.kelvinToCelsius(numval);
+                                num_out_dbl = Unit.kelvinToCelsius(input_field_value);
                                 break;
                             case "Fahrenheit":
-                                num_out_dbl = Unit.kelvinToFahrenheit(numval);
+                                num_out_dbl = Unit.kelvinToFahrenheit(input_field_value);
                                 break;
 
                         }
@@ -199,18 +243,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-//    private void swapUnits() {
-//        Unit tmp = this.fromType;
-//        this.fromType = this.toType;
-//        this.toType = tmp;
-//
-//        TextView num_in_label = findViewById(R.id.num_in_label);
-//        num_in_label.setText(this.fromType.name());
-//
-//        TextView num_out_label = findViewById(R.id.num_out_label);
-//        num_out_label.setText(this.toType.name());
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -258,32 +290,3 @@ public class MainActivity extends AppCompatActivity {
         alert11.show();
     }
 }
-enum Unit{
-    Celsius,
-    Fahrenheit,
-    Kelvin;
-
-    static Double celsiusToFahrenheit(Editable c) {
-        return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
-    }
-
-    static Double celsiusToKelvin(Editable c) {
-        return Double.parseDouble(c.toString()) + 273.15;
-    }
-
-    static Double fahrenheitToCelsius(Editable c) {
-        return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
-    }
-
-    static Double fahrenheitToKelvin(Editable c) {
-        return (Double.parseDouble(c.toString()) - 32.0) / 1.8 + 273.15;
-    }
-
-    static Double kelvinToCelsius(Editable c) {
-        return Double.parseDouble(c.toString()) - 273.15;
-    }
-
-    static Double kelvinToFahrenheit(Editable c) {
-        return Double.parseDouble(c.toString()) * 1.8 - 459.67;
-    }
-};
