@@ -34,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText inputField;
     private LinearLayout parentLinearLayout;
-    private List<String> inputUnitSpinnerList = new ArrayList<>();
-    private List<String> unitCategorySpinnerList = new ArrayList<>();
+    private List<String> inputUnitSpinnerAdapterList;
+    private List<String> unitCategorySpinnerAdapterList;
     private Spinner unitCategorySpinner;
     private Spinner inputUnitSpinner;
+    private ArrayAdapter<String> inputUnitSpinnerArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +56,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void initializeApp() {
 
-        populateUnitCategorySpinner();
+        configureSpinner(this.unitCategorySpinner, this.unitCategorySpinnerAdapterList, Unit.unitCategories);
         configureUnitCategorySpinnerListener();
-        populateInputUnitsSpinner(Unit.temperatureUnits);
+        configureSpinner(this.inputUnitSpinner, this.unitCategorySpinnerAdapterList, Unit.temperatureUnits);
         configureInputUnitSpinnerListener();
         configureInputFieldTextListener();
 
     }
 
-    private void populateUnitCategorySpinner() {
-        populateSpinner(this.unitCategorySpinner, this.unitCategorySpinnerList, Unit.unitCategories);
+    private void configureSpinner(Spinner spinner, List<String> spinnerAdapterList, String[] unitsArray) {
+
+        spinnerAdapterList = new ArrayList<>(Arrays.asList(unitsArray));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, spinnerAdapterList);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
 
     private void configureUnitCategorySpinnerListener() {
@@ -79,38 +87,16 @@ public class MainActivity extends AppCompatActivity {
 
                 if (selectedText.equals("Temperature")) {
                     inflateOutputUnitFields(Unit.temperatureUnits);
-                    //populateInputUnitsSpinner(Unit.temperatureUnits);
+                    resetInputUnitsSpinner(Unit.temperatureUnits);
                 } else if (selectedText.equals("Length")) {
                     inflateOutputUnitFields(Unit.lengthUnits);
-                    //populateInputUnitsSpinner(Unit.lengthUnits);
+                    resetInputUnitsSpinner(Unit.lengthUnits);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
-    }
-
-    private void populateInputUnitsSpinner(String[] unitsArray) {
-        populateSpinner(this.inputUnitSpinner, this.inputUnitSpinnerList, unitsArray);
-    }
-
-    private void populateSpinner(Spinner spinner, List<String> spinnerList, String[] unitsArray) {
-        spinnerList.addAll(Arrays.asList(unitsArray));
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_item, spinnerList);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }
-
-    private void inflateOutputUnitFields(String[] unitsArray) {
-        // clear output fields from parentLinearLayout
-        this.parentLinearLayout.removeAllViews();
-        for (String unit: unitsArray) {
-            addField(this.parentLinearLayout, unit);
-        }
     }
 
     private void configureInputUnitSpinnerListener() {
@@ -128,6 +114,23 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {}
 
         });
+    }
+
+    private void resetInputUnitsSpinner(String[] unitsList) {
+
+        inputUnitSpinnerAdapterList.clear();
+
+        inputUnitSpinnerAdapterList.addAll(Arrays.asList(unitsList));
+
+        inputUnitSpinnerArrayAdapter.notifyDataSetChanged();
+    }
+
+    private void inflateOutputUnitFields(String[] unitsArray) {
+
+        this.parentLinearLayout.removeAllViews();
+        for (String unit: unitsArray) {
+            addField(this.parentLinearLayout, unit);
+        }
     }
 
     private void onInputSpinnerChange(String selectedText) {
