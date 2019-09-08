@@ -2,6 +2,8 @@ package com.example.unitconverter_basic;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +22,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         this.parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
         this.unitCategorySpinner = (Spinner) findViewById(R.id.unit_category_spinner);
         this.inputUnitSpinner = (Spinner) findViewById(R.id.input_unit_spinner);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         initializeApp();
     }
@@ -72,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
         unitCategorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitCategorySpinner.setAdapter(unitCategorySpinnerArrayAdapter);
+
+        //View v = unitCategorySpinner.getSelectedView();
+        //((TextView)unitCategorySpinner.getSelectedView()).setTextColor(Color.WHITE);
     }
 
     private void configureInputUnitSpinner(String[] unitsArray) {
@@ -93,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
                 TextView spinnerTextView = (TextView) selectedItemView;
                 String selectedText = spinnerTextView.getText().toString();
 
+                TextView tv = (TextView) unitCategorySpinner.getSelectedView();
+                tv.setTextColor(Color.WHITE);
+                tv.setTextSize(20);
+
                 inputField.setText("");
 
                 if (selectedText.equals("Temperature")) {
@@ -110,13 +121,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureInputUnitSpinnerListener() {
-
         inputUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 TextView spinnerTextView = (TextView) selectedItemView;
                 String selectedText = spinnerTextView.getText().toString();
+
+                TextView tv = (TextView) inputUnitSpinner.getSelectedView();
+
+                //tv.setTextColor(Color.WHITE);
+                tv.setTextSize(20);
+
                 onInputSpinnerChange(selectedText);
             }
 
