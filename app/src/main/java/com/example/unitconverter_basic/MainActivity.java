@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText inputField;
     private LinearLayout parentLinearLayout;
     private List<String> inputUnitSpinnerAdapterList;
-    private List<String> unitCategorySpinnerAdapterList;
     private Spinner unitCategorySpinner;
     private Spinner inputUnitSpinner;
     private ArrayAdapter<String> inputUnitSpinnerArrayAdapter;
@@ -56,23 +55,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void initializeApp() {
 
-        configureSpinner(this.unitCategorySpinner, this.unitCategorySpinnerAdapterList, Unit.unitCategories);
+        configureUnitCategorySpinner(Unit.unitCategories);
         configureUnitCategorySpinnerListener();
-        configureSpinner(this.inputUnitSpinner, this.unitCategorySpinnerAdapterList, Unit.temperatureUnits);
+        configureInputUnitSpinner(Unit.temperatureUnits);
         configureInputUnitSpinnerListener();
         configureInputFieldTextListener();
 
     }
 
-    private void configureSpinner(Spinner spinner, List<String> spinnerAdapterList, String[] unitsArray) {
+    private void configureUnitCategorySpinner(String[] unitsArray) {
 
-        spinnerAdapterList = new ArrayList<>(Arrays.asList(unitsArray));
+        List<String> unitCategorySpinnerAdapterList = new ArrayList<>(Arrays.asList(unitsArray));
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, spinnerAdapterList);
+        ArrayAdapter<String> unitCategorySpinnerArrayAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, unitCategorySpinnerAdapterList);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        unitCategorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        unitCategorySpinner.setAdapter(unitCategorySpinnerArrayAdapter);
+    }
+
+    private void configureInputUnitSpinner(String[] unitsArray) {
+
+        inputUnitSpinnerAdapterList = new ArrayList<>(Arrays.asList(unitsArray));
+
+        inputUnitSpinnerArrayAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, inputUnitSpinnerAdapterList);
+
+        inputUnitSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        inputUnitSpinner.setAdapter(inputUnitSpinnerArrayAdapter);
     }
 
     private void configureUnitCategorySpinnerListener() {
