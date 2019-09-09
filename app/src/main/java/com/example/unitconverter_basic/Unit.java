@@ -2,53 +2,98 @@ package com.example.unitconverter_basic;
 
 import android.text.Editable;
 
-public class Unit {
-
-    static String inputUnit;
-    static double inputValue;
-
-    private String outputUnit;
-
+class Unit {
 
     static String[] temperatureUnits = {"Celsius", "Fahrenheit", "Kelvin"};
     static String[] lengthUnits = {"Centimeters", "Inches", "Feet", "Yards", "Meters", "Kilometers", "Miles", "Lightyears"};
     static String[] unitCategories = {"Temperature", "Length"};
 
-//    static String[] temperatureUnits = {"Celsius", "Fahrenheit", "Kelvin"};
-//    static String[] lengthUnits = {"Centimeters", "Inches", "Feet", "Yards", "Meters", "Kilometers", "Miles", "Lightyears"};
-//    static String[] unitCategories = {"Temperature", "Length"};
+    static Double convert(String inputCategory, String inputUnit, String outputUnit, Double inputFieldValue) {
+        Double outputValue = 0.0;
+        switch (inputCategory) {
+            case "Temperature":
+                if(inputUnit.equals("Celsius")) {
+                    switch(outputUnit) {
+                        case "Celsius":
+                            outputValue = inputFieldValue;
+                            break;
+                        case "Fahrenheit":
+                            outputValue = Unit.celsiusToFahrenheit(inputFieldValue);
+                            break;
+                        case "Kelvin":
+                            outputValue = Unit.celsiusToKelvin(inputFieldValue);
+                            break;
+                    }
+                }
+                if(inputUnit.equals("Fahrenheit")) {
+                    switch(outputUnit) {
+                        case "Fahrenheit":
+                            outputValue = Double.parseDouble(inputFieldValue.toString());
+                            break;
+                        case "Celsius":
+                            outputValue = Unit.fahrenheitToCelsius(inputFieldValue);
+                            break;
+                        case "Kelvin":
+                            outputValue = Unit.fahrenheitToKelvin(inputFieldValue);
+                            break;
+                    }
+                }
+                if(inputUnit.equals("Kelvin")) {
+                    switch(outputUnit) {
+                        case "Kelvin":
+                            outputValue = Double.parseDouble(inputFieldValue.toString());
+                            break;
+                        case "Celsius":
+                            outputValue = Unit.kelvinToCelsius(inputFieldValue);
+                            break;
+                        case "Fahrenheit":
+                            outputValue = Unit.kelvinToFahrenheit(inputFieldValue);
+                            break;
 
-    public Unit(String inputUnit, String outputUnit, double inputValue) {
-        this.inputUnit = inputUnit;
-        this.inputValue = inputValue;
+                    }
+                }
+                break;
+            case "Length":
 
-        this.outputUnit = outputUnit;
-
+                break;
+            default:
+        }
+        return outputValue;
     }
 
-    static Double celsiusToFahrenheit(Editable c) {
+//    static Double convertLengthMetric(String inputUnit, String outputUnit, Double c) {
+//
+//        Double outputValue;
+//
+//
+//        return outputValue;
+//    }
+
+    static Double celsiusToFahrenheit(Double c) {
         return Double.parseDouble(c.toString()) * (9.0/5.0) + 32.0;
     }
 
-    static Double celsiusToKelvin(Editable c) {
+    static Double celsiusToKelvin(Double c) {
         return Double.parseDouble(c.toString()) + 273.15;
     }
 
-    static Double fahrenheitToCelsius(Editable c) {
+    static Double fahrenheitToCelsius(Double c) {
         return (Double.parseDouble(c.toString()) - 32.0) * (5.0/9.0);
     }
 
-    static Double fahrenheitToKelvin(Editable c) {
+    static Double fahrenheitToKelvin(Double c) {
         return (Double.parseDouble(c.toString()) - 32.0) / 1.8 + 273.15;
     }
 
-    static Double kelvinToCelsius(Editable c) {
+    static Double kelvinToCelsius(Double c) {
         return Double.parseDouble(c.toString()) - 273.15;
     }
 
-    static Double kelvinToFahrenheit(Editable c) {
+    static Double kelvinToFahrenheit(Double c) {
         return Double.parseDouble(c.toString()) * 1.8 - 459.67;
     }
+
+    //static Double convertLengthMetric();
 }
 
 

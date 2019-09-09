@@ -1,14 +1,10 @@
 package com.example.unitconverter_basic;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -23,19 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    //TODO: fix initial 0 bug
-
     private String inputUnit;
-    private double inputValue;
-
+    private String inputCategory;
     private EditText inputField;
     private LinearLayout parentLinearLayout;
     private List<String> inputUnitSpinnerAdapterList;
@@ -51,20 +43,16 @@ public class MainActivity extends AppCompatActivity {
         this.parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
         this.unitCategorySpinner = (Spinner) findViewById(R.id.unit_category_spinner);
         this.inputUnitSpinner = (Spinner) findViewById(R.id.input_unit_spinner);
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         initializeApp();
     }
 
     public void initializeApp() {
-
         configureUnitCategorySpinner(Unit.unitCategories);
         configureUnitCategorySpinnerListener();
         configureInputUnitSpinner(Unit.temperatureUnits);
         configureInputUnitSpinnerListener();
         configureInputFieldTextListener();
-
     }
 
     private void configureUnitCategorySpinner(String[] unitsArray) {
@@ -76,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         unitCategorySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitCategorySpinner.setAdapter(unitCategorySpinnerArrayAdapter);
-
-        //View v = unitCategorySpinner.getSelectedView();
-        //((TextView)unitCategorySpinner.getSelectedView()).setTextColor(Color.WHITE);
     }
 
     private void configureInputUnitSpinner(String[] unitsArray) {
@@ -93,25 +78,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureUnitCategorySpinnerListener() {
-        unitCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        this.unitCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 TextView spinnerTextView = (TextView) selectedItemView;
                 String selectedText = spinnerTextView.getText().toString();
-
                 TextView tv = (TextView) unitCategorySpinner.getSelectedView();
                 tv.setTextColor(Color.WHITE);
                 tv.setTextSize(20);
-
                 inputField.setText("");
+                inputCategory = selectedText;
 
                 if (selectedText.equals("Temperature")) {
                     inflateOutputUnitFields(Unit.temperatureUnits);
                     resetInputUnitsSpinner(Unit.temperatureUnits);
+                    inputField.setHint("Start typing!");
                 } else if (selectedText.equals("Length")) {
                     inflateOutputUnitFields(Unit.lengthUnits);
                     resetInputUnitsSpinner(Unit.lengthUnits);
+                    inputField.setHint("TODO: Length formulas...");
                 }
             }
 
@@ -127,12 +113,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 TextView spinnerTextView = (TextView) selectedItemView;
                 String selectedText = spinnerTextView.getText().toString();
-
                 TextView tv = (TextView) inputUnitSpinner.getSelectedView();
-
-                //tv.setTextColor(Color.WHITE);
                 tv.setTextSize(20);
-
                 onInputSpinnerChange(selectedText);
             }
 
@@ -143,16 +125,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetInputUnitsSpinner(String[] unitsList) {
-
         inputUnitSpinnerAdapterList.clear();
-
         inputUnitSpinnerAdapterList.addAll(Arrays.asList(unitsList));
-
         inputUnitSpinnerArrayAdapter.notifyDataSetChanged();
     }
 
     private void inflateOutputUnitFields(String[] unitsArray) {
-
         this.parentLinearLayout.removeAllViews();
         for (String unit: unitsArray) {
             addField(this.parentLinearLayout, unit);
@@ -160,32 +138,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onInputSpinnerChange(String selectedText) {
-
         this.inputUnit = selectedText;
         convertUnits();
     }
 
     private void configureInputFieldTextListener() {
-        // Enable TextWatcher on input unit field
         this.inputField.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                System.out.println("beforeTextChanged:\n\tCharSequence s: " + s +
-                        "\n\tint start: " + start +
-                        "\n\tint count: " + count +
-                        "\n\tint after: " + after);
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println("onTextChanged:\n\tCharSequence s: " + s +
-                        "\n\tint start: " + start +
-                        "\n\tint before: " + before +
-                        "\n\tint count: " + count);
+                if (inputField.length() == 2) {
+                    if (s.charAt(0) == '0') {
+                        inputField.setText(s.subSequence(1, s.length()).toString());
+                        inputField.setSelection(inputField.length());
+                    } else if (s.charAt(0) == '-' && (s.charAt(1) == '-' || s.charAt(1) == '0')) {
+                        inputField.setText(s.subSequence(1, s.length()).toString());
+                        inputField.setSelection(inputField.length());
+                    }
+                }
                 convertUnits();
             }
         });
@@ -195,8 +171,8 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
         final View rowView = inflater.inflate(R.layout.field, null);
-        EditText editText = (EditText)rowView.findViewById(R.id.num_out_template);
-        TextView textView = (TextView)rowView.findViewById(R.id.num_out_label_template);
+        EditText editText = (EditText)rowView.findViewById(R.id.output_item_field_template);
+        TextView textView = (TextView)rowView.findViewById(R.id.output_item_label_template);
         editText.setTag(unitTypeString);
         textView.setText(unitTypeString);
         // Add the new row before the add field button.
@@ -204,11 +180,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void convertUnits() {
-        Editable input_field_value = this.inputField.getText();
+        if (inputField.length() == 0 || inputField.getText().toString().equals("-") || inputField.getText().toString().equals("+")) {
+            clearOutputFields();
+            return;
+        }
 
-        String sInput_field_value = input_field_value.toString();
-
-        Double num_out_dbl = 0.0;
+        Editable inputFieldEditable = this.inputField.getText();
+        Double inputFieldValue = Double.parseDouble(inputFieldEditable.toString());
+        Double outputValue = 0.0;
 
         for (int i = 0; i < parentLinearLayout.getChildCount(); i++) {
             LinearLayout childLinearLayout = (LinearLayout) parentLinearLayout.getChildAt(i);
@@ -217,62 +196,24 @@ public class MainActivity extends AppCompatActivity {
                 View childElem = childLinearLayout.getChildAt(j);
                 if (childElem instanceof EditText) {
                     childElemEditText = (EditText) childElem;
-                    String tag = (String) childElem.getTag();
-                    System.out.println(tag);
-
-                    // Clear fields and break if nothing in input or only minus symbol
-                    if(inputField.length() == 0 || input_field_value.toString().equals("-")) {
-                        childElemEditText.setText("");
-                        break;
-                    }
-
-                    if(this.inputUnit.equals("Celsius")) {
-                        switch(tag) {
-                            case "Celsius":
-                                num_out_dbl = Double.parseDouble(input_field_value.toString());
-                                break;
-                            case "Fahrenheit":
-                                num_out_dbl = Unit.celsiusToFahrenheit(input_field_value);
-                                break;
-                            case "Kelvin":
-                                num_out_dbl = Unit.celsiusToKelvin(input_field_value);
-                                break;
-                        }
-                    }
-                    if(this.inputUnit.equals("Fahrenheit")) {
-                        switch(tag) {
-                            case "Fahrenheit":
-                                num_out_dbl = Double.parseDouble(input_field_value.toString());
-                                break;
-                            case "Celsius":
-                                num_out_dbl = Unit.fahrenheitToCelsius(input_field_value);
-                                break;
-                            case "Kelvin":
-                                num_out_dbl = Unit.fahrenheitToKelvin(input_field_value);
-                                break;
-
-                        }
-                    }
-                    if(this.inputUnit.equals("Kelvin")) {
-                        switch(tag) {
-                            case "Kelvin":
-                                num_out_dbl = Double.parseDouble(input_field_value.toString());
-                                break;
-                            case "Celsius":
-                                num_out_dbl = Unit.kelvinToCelsius(input_field_value);
-                                break;
-                            case "Fahrenheit":
-                                num_out_dbl = Unit.kelvinToFahrenheit(input_field_value);
-                                break;
-
-                        }
-                    }
-                    childElemEditText.setText(Double.toString(num_out_dbl)); //String.format("%.4f", num_out_dbl));
+                    String outputUnit = (String) childElem.getTag();
+                    outputValue = Unit.convert(inputCategory, inputUnit, outputUnit, inputFieldValue);
+                    childElemEditText.setText(Double.toString(outputValue));
                 }
             }
         }
     }
 
+    private void clearOutputFields() {
+        ViewGroup group = (ViewGroup)parentLinearLayout;
+        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+            LinearLayout outputItemContainer = (LinearLayout) group.getChildAt(i);
+            View outputItemField = outputItemContainer.findViewById(R.id.output_item_field_template);
+            if (outputItemField instanceof EditText) {
+                ((EditText)outputItemField).setText("");
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -293,29 +234,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-    private void alert(String s) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(s);
-        builder1.setCancelable(true);
-
-        builder1.setPositiveButton(
-                "Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        builder1.setNegativeButton(
-                "No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
     }
 }
