@@ -13,7 +13,7 @@ To provide instant feedback in the UI, instead of listening for a button click t
 ### Dynamic UI
 The second goal was to avoid statically defining UI elements that depend on user selection, and instead create (inflate) and populate them dynamically based on an array of Strings corresponding to the unit type category.
 
-The app works, and can be expanded without great effort to include additional unit categories. At the moment, conversion only works for Temperature, but while Length will correctly populate the input unit spinner and inflate the output fields, I haven't yet had time to type in all of the formulas to make the conversion itself happen.
+The app works, and can be expanded without great effort to include additional unit categories. At the moment, conversion only works for Temperature; selection of Length in the unit category spinner will correctly populate the input unit spinner and inflate the output fields, but I have not yet had time to enter the formulas to make the conversion itself happen.
 
 ## Daily Log
 
