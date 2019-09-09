@@ -11,7 +11,7 @@ For this implementation, my goals were as follows:
 To provide instant feedback in the UI, instead of listening for a button click to trigger the conversion, a TextWatcher is used to identify change in the input EditText field, and triggers the conversion process each time a number is entered. The conversion process runs for _all_ output units at once, rather than requiring the user to choose only one.
 
 ### Dynamic UI
-The second goal was to avoid statically defining UI elements, and instead create (inflate) and populate them dynamically based on an array of Strings corresponding to the unit type category.
+The second goal was to avoid statically defining UI elements that depend on user selection, and instead create (inflate) and populate them dynamically based on an array of Strings corresponding to the unit type category.
 
 The app works, and can be expanded without great effort to include additional unit categories. At the moment, conversion only works for Temperature, but while Length will correctly populate the input unit spinner and inflate the output fields, I haven't yet had time to type in all of the formulas to make the conversion itself happen.
 
