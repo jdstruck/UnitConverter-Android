@@ -1,7 +1,5 @@
 package com.example.unitconverter_basic;
 
-import android.text.Editable;
-
 class Unit {
 
     static String[] temperatureUnits = {"Celsius", "Fahrenheit", "Kelvin"};
